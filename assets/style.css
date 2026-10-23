@@ -92,3 +92,6 @@ body:not(.is-home) .reading-grid{animation:open-essay 350ms ease-out both}
 ::view-transition-group(*){animation-duration:320ms;animation-timing-function:ease-in-out}
 @media(prefers-reduced-motion:reduce){body:not(.is-home) .reading-grid{animation:none}::view-transition-group(*){animation-duration:0s}}
 @media(max-width:700px){.is-home #titles a{flex:1 1 100%!important}#home-link{margin-left:3px}}
+
+/* Article focus supports navigation without drawing a frame around the content. */
+#essay:focus{outline:none}
