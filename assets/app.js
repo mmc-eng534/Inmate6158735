@@ -4,6 +4,7 @@ const essays = [
     "slug": "the-guide-to-navigating-the-modern-day-world-consumption",
     "title": "A guide to navigating the modern day world - Consumption",
     "author": "Patrick Amberson",
+    "cover": "assets/stock-exchange.jpg",
     "category": "Essays",
     "year": "2026",
     "date": "2026",
@@ -88,7 +89,7 @@ function render() {
   const years = [...new Set(essays.map(essay => essay.year))].sort((a,b) => Number(b)-Number(a));
   const visible = essays.filter(essay => !selectedYear || essay.year === selectedYear).sort((a,b)=>Number(b.year)-Number(a.year));
   yearNav.innerHTML = years.map(year=>`<button class="${year===selectedYear?'selected':''}" aria-pressed="${year===selectedYear}" data-year="${year}">${year}</button>`).join('');
-  titleNav.innerHTML = visible.map(essay=>`<a style="view-transition-name:essay-${essays.indexOf(essay)}" class="${essay===selectedEssay?'selected':''}" href="#essay/${essay.slug}" ${essay===selectedEssay?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('');
+  titleNav.innerHTML = visible.map(essay=>`<a style="view-transition-name:essay-${essays.indexOf(essay)}" class="${essay===selectedEssay?'selected':''}" href="#essay/${essay.slug}" ${essay===selectedEssay?'aria-current="page"':''}>${isHome ? `<span class="cover-media ${essay.cover?'':'cover-no-image'}">${essay.cover?`<img src="${escapeHTML(essay.cover)}" alt="" loading="lazy">`:''}<span class="cover-title">${escapeHTML(essay.title)}</span></span><span class="cover-action"><span>Read essay</span><span class="cover-arrow" aria-hidden="true">→</span></span>` : escapeHTML(essay.title)}</a>`).join('');
   document.querySelector('#breadcrumb').textContent = isHome ? (selectedYear ? `Essays ${selectedYear}` : 'Home') : `Writing ${selectedEssay.year}`;
   if(isHome){
     document.querySelector('#essay').innerHTML='';

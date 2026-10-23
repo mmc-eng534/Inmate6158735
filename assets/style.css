@@ -95,3 +95,22 @@ body:not(.is-home) .reading-grid{animation:open-essay 350ms ease-out both}
 
 /* Article focus supports navigation without drawing a frame around the content. */
 #essay:focus{outline:none}
+
+/* Home photo cards remain one continuous, clearly labelled link. */
+.is-home .archive{border:0;padding:0}
+.is-home #titles{gap:24px}
+.is-home #titles a{display:block;flex:0 1 420px!important;max-width:100%;padding:0;border:1px solid #d0d0d0;background:#fff;color:#222;text-align:left;overflow:hidden;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.cover-media{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:#e6e4dc}
+.cover-media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.cover-media::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(0,0,0,.85))}
+.cover-title{position:absolute;z-index:1;left:20px;right:20px;bottom:21px;font-size:15px;line-height:1.55;color:#fff}
+.cover-action{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;font-size:11px;color:#333;background:#fff}
+.cover-action>span:first-child{text-decoration:underline;text-underline-offset:3px}
+.cover-arrow{font-size:18px;transition:transform .2s}
+.is-home #titles a:hover,.is-home #titles a:focus-visible{background:#fff;border-color:#333;box-shadow:0 3px 12px #00000012}
+.is-home #titles a:hover img,.is-home #titles a:focus-visible img{transform:scale(1.035)}
+.is-home #titles a:hover .cover-arrow,.is-home #titles a:focus-visible .cover-arrow{transform:translateX(4px)}
+.cover-no-image{aspect-ratio:auto;min-height:160px;background:#252525}
+@media(max-width:700px){.is-home #titles a{flex:1 1 100%!important}.cover-title{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.cover-media img,.cover-arrow{transition:none}.is-home #titles a:hover img,.is-home #titles a:focus-visible img{transform:none}}
+.is-home #titles a .cover-action{display:flex}
