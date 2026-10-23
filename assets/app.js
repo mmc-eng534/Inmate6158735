@@ -73,7 +73,7 @@ function render() {
   yearNav.innerHTML = years.map(year=>`<button class="${year===selectedYear?'selected':''}" aria-pressed="${year===selectedYear}" data-year="${year}">${year}</button>`).join('');
   titleNav.innerHTML = visible.map(essay=>`<a class="${essay.slug===selectedEssay.slug?'selected':''}" href="#essay/${essay.slug}" ${essay.slug===selectedEssay.slug?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('');
   document.querySelector('#breadcrumb').textContent = `Writing ${selectedEssay.year}`;
-  document.querySelector('#essay').innerHTML = `<h1>${escapeHTML(selectedEssay.title)}</h1>${selectedEssay.author?`<p class="byline">By ${escapeHTML(selectedEssay.author)}</p>`:''}${selectedEssay.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}${selectedEssay.sections?.length?`<ol class="essay-points">${selectedEssay.sections.map(section=>`<li><h2>${escapeHTML(section.title)}</h2>${section.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}</li>`).join('')}</ol>`:''}`;
+  document.querySelector('#essay').innerHTML = `${selectedEssay.author?`<p class="byline">By ${escapeHTML(selectedEssay.author)}</p>`:''}${selectedEssay.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}${selectedEssay.sections?.length?`<ol class="essay-points">${selectedEssay.sections.map(section=>`<li><h2>${escapeHTML(section.title)}</h2>${section.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}</li>`).join('')}</ol>`:''}`;
   selectPhoto(selectedPhoto);
   document.title = `${selectedEssay.title} — The Writing Room`;
   renderIndex();
