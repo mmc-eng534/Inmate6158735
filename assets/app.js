@@ -92,14 +92,14 @@ function render() {
   document.querySelector('#breadcrumb').textContent = isHome ? (selectedYear ? `Essays ${selectedYear}` : 'Home') : `Writing ${selectedEssay.year}`;
   if(isHome){
     document.querySelector('#essay').innerHTML='';
-    document.title='Patrick Amberson — Essays';
+    document.title='Jimmy Was a Simulator';
     titleNav.setAttribute('aria-label','Choose an essay');
     renderIndex();return;
   }
   document.querySelector('#essay').innerHTML = `${selectedEssay.author?`<p class="byline">By ${escapeHTML(selectedEssay.author)}</p>`:''}${selectedEssay.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}${selectedEssay.sections?.length?`<ol class="essay-points">${selectedEssay.sections.map(section=>`<li><h2>${escapeHTML(section.title)}</h2>${section.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}</li>`).join('')}</ol>`:''}`;
   positionGallery();
   selectPhoto(selectedPhoto);
-  document.title = `${selectedEssay.title} — The Writing Room`;
+  document.title = `${selectedEssay.title} — Jimmy Was a Simulator`;
   renderIndex();
 }
 let navigationVersion=0;
