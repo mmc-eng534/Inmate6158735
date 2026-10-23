@@ -73,36 +73,58 @@ function positionGallery(){
 }
 mobileLayout.addEventListener('change',positionGallery);
 
-let selectedYear = essays[0].year;
-let selectedEssay = essays[0];
+let selectedYear = null;
+let selectedEssay = null;
 const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const formatText = value => escapeHTML(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 function render() {
   // Keep the existing gallery and its event listeners when rebuilding the article.
   document.querySelector('.reading-grid').append(photoFigure);
   photoFigure.hidden=false;
+  const isHome = !selectedEssay;
+  document.body.classList.toggle('is-home',isHome);
+  document.querySelector('.reading-grid').hidden=isHome;
+  document.querySelector('#home-link').hidden=isHome;
   const years = [...new Set(essays.map(essay => essay.year))].sort((a,b) => Number(b)-Number(a));
-  const visible = essays.filter(essay => essay.year === selectedYear);
+  const visible = essays.filter(essay => !selectedYear || essay.year === selectedYear).sort((a,b)=>Number(b.year)-Number(a.year));
   yearNav.innerHTML = years.map(year=>`<button class="${year===selectedYear?'selected':''}" aria-pressed="${year===selectedYear}" data-year="${year}">${year}</button>`).join('');
-  titleNav.innerHTML = visible.map(essay=>`<a class="${essay.slug===selectedEssay.slug?'selected':''}" href="#essay/${essay.slug}" ${essay.slug===selectedEssay.slug?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('');
-  document.querySelector('#breadcrumb').textContent = `Writing ${selectedEssay.year}`;
+  titleNav.innerHTML = visible.map(essay=>`<a style="view-transition-name:essay-${essays.indexOf(essay)}" class="${essay===selectedEssay?'selected':''}" href="#essay/${essay.slug}" ${essay===selectedEssay?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('');
+  document.querySelector('#breadcrumb').textContent = isHome ? (selectedYear ? `Essays ${selectedYear}` : 'Home') : `Writing ${selectedEssay.year}`;
+  if(isHome){
+    document.querySelector('#essay').innerHTML='';
+    document.title='Patrick Amberson — Essays';
+    titleNav.setAttribute('aria-label','Choose an essay');
+    renderIndex();return;
+  }
   document.querySelector('#essay').innerHTML = `${selectedEssay.author?`<p class="byline">By ${escapeHTML(selectedEssay.author)}</p>`:''}${selectedEssay.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}${selectedEssay.sections?.length?`<ol class="essay-points">${selectedEssay.sections.map(section=>`<li><h2>${escapeHTML(section.title)}</h2>${section.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}</li>`).join('')}</ol>`:''}`;
   positionGallery();
   selectPhoto(selectedPhoto);
   document.title = `${selectedEssay.title} — The Writing Room`;
   renderIndex();
 }
-function route(){
-  const slug = location.hash.replace('#essay/','');
-  const essay = essays.find(item=>item.slug===slug);
-  if(essay){selectedEssay=essay;selectedYear=essay.year;}
-  render();
+let navigationVersion=0;
+function route(animate=true){
+  const match=location.hash.match(/^#essay\/(.+)$/);
+  const essay=match ? essays.find(item=>item.slug===match[1]) : null;
+  const yearMatch=location.hash.match(/^#year\/(\d{4})$/);
+  const version=++navigationVersion;
+  const update=()=>{
+    selectedEssay=essay || null;
+    selectedYear=essay ? essay.year : yearMatch && essays.some(item=>item.year===yearMatch[1]) ? yearMatch[1] : null;
+    closeIndex();render();window.scrollTo({top:0,behavior:'instant'});
+    if(animate){
+      const target=essay ? document.querySelector('#essay') : document.querySelector('#titles a');
+      target?.focus({preventScroll:true});
+    }
+  };
+  if(animate && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    const transition=document.startViewTransition(()=>{if(version===navigationVersion)update();});
+    transition.finished.catch(()=>{});
+  }else update();
 }
 function chooseYear(year){
-  const essay=essays.find(item=>item.year===year);
-  if(!essay)return;
-  selectedYear=year;selectedEssay=essay;
-  history.replaceState(null,'',`#essay/${essay.slug}`);render();
+  if(!essays.some(essay=>essay.year===year))return;
+  location.hash=`year/${year}`;
 }
 function renderIndex(){
   const query=document.querySelector('#index-search').value.trim().toLowerCase();
@@ -111,7 +133,7 @@ function renderIndex(){
   document.querySelector('#index-count').textContent=query ? `${matches.length} ${matches.length===1?'match':'matches'}` : `${essays.length} ${essays.length===1?'essay':'essays'} in the archive`;
   menu.querySelector('nav').innerHTML=years.length ? years.map(year=>{
     const group=matches.filter(essay=>essay.year===year);
-    return `<details ${query || year===selectedYear?'open':''}><summary>${escapeHTML(year)} <span>${group.length} ${group.length===1?'essay':'essays'}</span></summary><div class="index-entries">${group.map(essay=>`<a href="#essay/${essay.slug}" ${essay===selectedEssay?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('')}</div></details>`;
+    return `<details ${query || year===selectedYear || (!selectedYear && year===years[0])?'open':''}><summary>${escapeHTML(year)} <span>${group.length} ${group.length===1?'essay':'essays'}</span></summary><div class="index-entries">${group.map(essay=>`<a href="#essay/${essay.slug}" ${essay===selectedEssay?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('')}</div></details>`;
   }).join('') : '<p class="index-empty">No essays found. Try a different word or year.</p>';
 }
 function closeIndex(restoreFocus=false){menu.hidden=true;document.querySelector('#menu-toggle').setAttribute('aria-expanded','false');if(restoreFocus)document.querySelector('#menu-toggle').focus();}
@@ -123,15 +145,15 @@ document.querySelector('#menu-toggle').addEventListener('click',()=>{
 });
 document.querySelector('#close-menu').addEventListener('click',()=>closeIndex(true));
 document.querySelector('#index-search').addEventListener('input',renderIndex);
-menu.addEventListener('click',event=>{if(event.target.closest('a')){closeIndex();document.querySelector('#essay').focus();}});
+menu.addEventListener('click',event=>{if(event.target.closest('a'))closeIndex();});
 document.addEventListener('click',event=>{if(!menu.hidden && !menu.contains(event.target) && !event.target.closest('#menu-toggle'))closeIndex();});
 const zoom=document.querySelector('#zoom');
 document.querySelector('#enlarge').addEventListener('click',()=>{document.querySelector('#zoom-content').innerHTML=`<figure>${document.querySelector('#document').outerHTML.replace(' id="document"','')}<figcaption>${escapeHTML(gallery[selectedPhoto].caption)}</figcaption></figure>`;zoom.showModal();});
 document.querySelector('#close-zoom').addEventListener('click',()=>zoom.close());
 document.addEventListener('keydown',event=>{if(event.key==='Escape' && !menu.hidden)closeIndex(true);});
-window.addEventListener('hashchange',route);
+window.addEventListener('hashchange',()=>route());
 const thumbnails = document.querySelector('#thumbnails');
 thumbnails.innerHTML=gallery.map((photo,index)=>`<button data-photo="${index}" aria-label="${escapeHTML(photo.caption)}" aria-pressed="${index===0}"><img src="${photo.src}" alt=""></button>`).join('');
 thumbnails.addEventListener('click',event=>{const button=event.target.closest('[data-photo]');if(button)selectPhoto(Number(button.dataset.photo));});
-route();
-document.querySelector('#archive-reset').addEventListener('click',()=>{chooseYear([...new Set(essays.map(essay=>essay.year))].sort((a,b)=>Number(b)-Number(a))[0]);});
+route(false);
+document.querySelector('#archive-reset').addEventListener('click',()=>{location.hash='home';});
