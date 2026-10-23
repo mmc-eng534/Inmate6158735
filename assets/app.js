@@ -62,18 +62,32 @@ function selectPhoto(index){
 const yearNav = document.querySelector('#years');
 const titleNav = document.querySelector('#titles');
 const menu = document.querySelector('#menu');
+const photoFigure = document.querySelector('.document-figure');
+const mobileLayout = window.matchMedia('(max-width:700px)');
+function positionGallery(){
+  const byline=document.querySelector('#essay .byline');
+  if(mobileLayout.matches){
+    if(byline)byline.after(photoFigure);
+    else document.querySelector('#essay').prepend(photoFigure);
+  }else document.querySelector('.reading-grid').append(photoFigure);
+}
+mobileLayout.addEventListener('change',positionGallery);
+
 let selectedYear = essays[0].year;
 let selectedEssay = essays[0];
 const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const formatText = value => escapeHTML(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 function render() {
-  document.querySelector('.document-figure').hidden=false;
+  // Keep the existing gallery and its event listeners when rebuilding the article.
+  document.querySelector('.reading-grid').append(photoFigure);
+  photoFigure.hidden=false;
   const years = [...new Set(essays.map(essay => essay.year))].sort((a,b) => Number(b)-Number(a));
   const visible = essays.filter(essay => essay.year === selectedYear);
   yearNav.innerHTML = years.map(year=>`<button class="${year===selectedYear?'selected':''}" aria-pressed="${year===selectedYear}" data-year="${year}">${year}</button>`).join('');
   titleNav.innerHTML = visible.map(essay=>`<a class="${essay.slug===selectedEssay.slug?'selected':''}" href="#essay/${essay.slug}" ${essay.slug===selectedEssay.slug?'aria-current="page"':''}>${escapeHTML(essay.title)}</a>`).join('');
   document.querySelector('#breadcrumb').textContent = `Writing ${selectedEssay.year}`;
   document.querySelector('#essay').innerHTML = `${selectedEssay.author?`<p class="byline">By ${escapeHTML(selectedEssay.author)}</p>`:''}${selectedEssay.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}${selectedEssay.sections?.length?`<ol class="essay-points">${selectedEssay.sections.map(section=>`<li><h2>${escapeHTML(section.title)}</h2>${section.paragraphs.map(paragraph=>`<p>${formatText(paragraph)}</p>`).join('')}</li>`).join('')}</ol>`:''}`;
+  positionGallery();
   selectPhoto(selectedPhoto);
   document.title = `${selectedEssay.title} — The Writing Room`;
   renderIndex();
