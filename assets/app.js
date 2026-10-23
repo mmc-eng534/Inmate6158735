@@ -2,7 +2,7 @@
 const essays = [
   {
     "slug": "the-guide-to-navigating-the-modern-day-world-consumption",
-    "title": "The guide to navigating the modern day world - Consumption",
+    "title": "A guide to navigating the modern day world - Consumption",
     "author": "Patrick Amberson",
     "category": "Essays",
     "year": "2026",

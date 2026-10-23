@@ -1,6 +1,6 @@
 # The Writing Room
 
-A static, typewriter-style essay archive based on the supplied reference screenshot. Contains the 2026 essay “The guide to navigating the modern day world - Consumption” by Patrick Amberson.
+A static, typewriter-style essay archive based on the supplied reference screenshot. Contains the 2026 essay “A guide to navigating the modern day world - Consumption” by Patrick Amberson.
 
 ## Run
 
