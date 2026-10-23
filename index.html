@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An archive of essays, observations, and notes.">
+<title>The Writing Room</title>
+<link rel="stylesheet" href="assets/style.css?v=7">
+<script src="assets/app.js?v=7" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to writing</a>
+<header class="breadcrumb"><button id="menu-toggle" aria-expanded="false" aria-controls="menu">Menu</button><span>&gt;</span><strong id="breadcrumb">Writing / 2026</strong></header><button id="archive-reset" aria-label="Return to latest year">x</button>
+<aside id="menu" hidden aria-label="Essay index"><div class="menu-heading"><strong>Essay index</strong><button id="close-menu" aria-label="Close menu">×</button></div><label class="index-search-label" for="index-search">Find an essay</label><input id="index-search" type="search" placeholder="Search words, topics, or years…" autocomplete="off"><p id="index-count" role="status"></p><nav aria-label="Essays grouped by year"></nav></aside>
+<main id="main">
+
+<nav id="years" aria-label="Writing by year"></nav>
+<section class="archive" aria-label="Writing archive">
+<nav id="titles" aria-label="Choose an essay"></nav>
+<div class="reading-grid">
+<article id="essay" aria-label="Selected essay" tabindex="-1"></article>
+<figure class="document-figure"><div class="document-wrap"><img id="document" class="document" src="assets/stock-exchange.jpg" alt="The first stock exchange."><button id="enlarge" aria-label="Enlarge image">[ + ]</button></div><figcaption id="caption"></figcaption><div id="thumbnails" aria-label="Image gallery"></div></figure>
+</div>
+</section>
+</main>
+<dialog id="zoom"><button id="close-zoom" aria-label="Close enlarged image">Close ×</button><div id="zoom-content"></div></dialog>
+</body>
+</html>
